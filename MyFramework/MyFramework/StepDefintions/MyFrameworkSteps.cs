@@ -1,11 +1,19 @@
 ﻿using MyFramework.Pages;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using TechTalk.SpecFlow;
 
 namespace MyFramework.StepDefintions
 {
     [Binding]
-    public class MyFrameworkSteps : BaseClass
+    public class MyFrameworkSteps
     {
+
+
+        IWebDriver _driver = BaseClass.GetDriver();
+        WebDriverWait _wait = BaseClass.GetWait();
+
+
         [Given(@"User Loginned and he is on Lead Source page")]
         public void GivenUserLoginnedAndHeIsOnLeadSourcePage()
         {

@@ -300,3 +300,4 @@ D:\OneDrive\QA\Framework\MyFramework\Experimental\MyFramework\MyFramework\obj\De
 D:\OneDrive\QA\Framework\MyFramework\Experimental\MyFramework\MyFramework\obj\Debug\net5.0\ref\MyFramework.dll
 D:\OneDrive\QA\Framework\MyFramework\Experimental\MyFramework\MyFramework\obj\Debug\net5.0\MyFramework.pdb
 D:\OneDrive\QA\Framework\MyFramework\Experimental\MyFramework\MyFramework\obj\Debug\net5.0\MyFramework.genruntimeconfig.cache
+D:\OneDrive\QA\Framework\MyFramework\Experimental\MyFramework\MyFramework\obj\Debug\net5.0\MyFramework.csproj.AssemblyReference.cache

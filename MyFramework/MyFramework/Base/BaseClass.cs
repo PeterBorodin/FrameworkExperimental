@@ -1,3 +1,8 @@
+using AventStack.ExtentReports;
+using AventStack.ExtentReports.Gherkin.Model;
+using AventStack.ExtentReports.Reporter;
+using AventStack.ExtentReports.Reporter.Configuration;
+using BoDi;
 using MyFramework.Settings;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -5,44 +10,31 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Threading;
 using TechTalk.SpecFlow;
-using AventStack.ExtentReports;
-using AventStack.ExtentReports.Reporter;
-using AventStack.ExtentReports.Gherkin.Model;
-using System.Configuration;
-using AventStack.ExtentReports.Reporter.Configuration;
-using System.Reflection;
-using BoDi;
 
 namespace MyFramework
 {
+    [Binding]
     public class BaseClass
     {
         private static ExtentTest featureName;
         private static ExtentTest scenario;
         private static ExtentReports extent;
-        private static KlovReporter klov;
+        private IObjectContainer objectContainer;
+        public BaseClass(IObjectContainer container)
+        {
+            objectContainer = container;
+        }
 
-        protected IWebDriver _driver;
-        protected WebDriverWait _wait;
+        protected static IWebDriver _driver;
+        protected static WebDriverWait _wait;
 
         [BeforeTestRun]
         public static void InitializeReport()
         {
-            
-            var htmlReporter = new ExtentHtmlReporter(@"C:\Report\ExtentReport.html");            
-            htmlReporter.Config.Theme = Theme.Standard;
-            // = AventStack.ExtentReports.Reporter.Configuration.Theme.Standard;
-            //htmlReporter.Configuration().Theme = AventStack.ExtentReports.Reporter.Configuration.Theme.Dark;
-            klov = new KlovReporter();
 
-            klov.InitMongoDbConnection("localhost", 27017);
+            var htmlReporter = new ExtentHtmlReporter("C:\\Report\\ExtentReport.html");
+            htmlReporter.Config.Theme = Theme.Dark;
 
-            klov.ProjectName = "ExecuteAutomation Test";
-
-            // URL of the KLOV server
-            klov.KlovUrl = "http://localhost:5689";
-
-            klov.ReportName = "Karthik KK" + DateTime.Now.ToString();
 
             extent = new ExtentReports();
             extent.AttachReporter(htmlReporter);
@@ -55,22 +47,20 @@ namespace MyFramework
         }
 
         [BeforeFeature]
-        
+
         public static void BeforeFeature()
         {
             featureName = extent.CreateTest<Feature>(FeatureContext.Current.FeatureInfo.Title);
         }
 
         [AfterStep]
-        
-        public void InsertReportingSteps()
+
+        public static void InsertReportingSteps()
         {
 
             var stepType = ScenarioStepContext.Current.StepInfo.StepDefinitionType.ToString();
 
-            PropertyInfo pInfo = typeof(ScenarioContext).GetProperty("TestStatus", BindingFlags.Instance | BindingFlags.NonPublic);
-            MethodInfo getter = pInfo.GetGetMethod(nonPublic: true);
-            object TestResult = getter.Invoke(ScenarioContext.Current, null);
+            var TestResult = ScenarioStepContext.Current.Status;
 
             if (ScenarioContext.Current.TestError == null)
             {
@@ -129,12 +119,23 @@ namespace MyFramework
 
             _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(6000);
             _wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(6000));
-           
-            scenario = featureName.CreateNode(ScenarioContext.Current.ScenarioInfo.Title);
+            objectContainer.RegisterInstanceAs<IWebDriver>(_driver);
+            objectContainer.RegisterInstanceAs<WebDriverWait>(_wait);
+
+            scenario = featureName.CreateNode<Scenario>(ScenarioContext.Current.ScenarioInfo.Title);
         }
-        public void ThreadSleep(int msToWait = 1000)
+
+        public static void ThreadSleep(int msToWait = 1000)
         {
             Thread.Sleep(msToWait);
+        }
+        public static IWebDriver GetDriver()
+        {
+            return _driver;
+        }
+        public static WebDriverWait GetWait()
+        {
+            return _wait;
         }
 
     }

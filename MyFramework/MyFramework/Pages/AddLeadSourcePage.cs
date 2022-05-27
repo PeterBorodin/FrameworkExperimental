@@ -5,7 +5,7 @@ using SeleniumExtras.WaitHelpers;
 
 namespace MyFramework.Pages
 {
-    class AddLeadSourcePage : BaseClass
+    class AddLeadSourcePage
     {
         private IWebDriver _driver;
         private WebDriverWait _wait;
@@ -50,7 +50,7 @@ namespace MyFramework.Pages
 
         public void ClickSaveButton()
         {
-            ThreadSleep();
+            BaseClass.ThreadSleep();
             _wait.Until(ExpectedConditions.ElementToBeClickable(saveButton)).Click();
         }
 
